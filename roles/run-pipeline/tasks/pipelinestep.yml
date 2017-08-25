@@ -1,0 +1,29 @@
+- debug: msg="executing step {{ step }}"
+
+- name: "RUN MODEL TRAINING PIPELINE STEP: {{ step.step }}"
+  shell: |
+      kubectl run -i --rm --tty {{ step.step }} --overrides='
+      {
+        "apiVersion": "v1",
+        "spec": {
+          "template": {
+            "spec": {
+              "containers": [
+                {
+                  "name": "{{ step.step }}",
+                  "image": "{{ step.image }}",
+                  "stdin": true,
+                  "stdinOnce": true,
+                  "tty": true
+                }
+              ],
+              "imagePullSecrets": [
+                {
+                  "name": "docker-credentials"
+                }
+              ]
+            }
+          }
+        }
+      }
+      ' --image={{ step.image }} --restart=Never --env="SNOWFLAKE_HOST=deliveroo.eu-central-1" --env="ROO_ENV_NO_EC2=true" --env="SNOWFLAKE_USERNAME=foo" --env="SNOWFLAKE_PASSWORD=bar" -- {{ step.cmd }}

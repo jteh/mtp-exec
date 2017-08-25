@@ -1,0 +1,8 @@
+- hosts: localhost
+  user: root
+  gather_facts: false
+  roles:
+#    - install-kubectl
+#    - configure-kubectl
+#    - ensure docker-credentials are valid, maybe only when running against minikube
+    - run-pipeline
